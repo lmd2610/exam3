@@ -6,6 +6,8 @@ import {  createBrowserRouter,RouterProvider } from "react-router-dom";
 import Hello from "./components/users/hello/hello";
 import reportWebVitals from './reportWebVitals';
 import Login from './components/users/login/login';
+import ListPost from './components/post/list';
+import ListUser from './components/users/list';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
     path: "/hello",
     element: <Hello />
   },
+  {
+    path:"/posts",
+    element:<ListPost/>
+  },
+  {
+    path:'/users',
+    element:<ListUser/>
+  }
   
 ]);
 root.render(

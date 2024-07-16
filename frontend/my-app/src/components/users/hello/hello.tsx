@@ -9,9 +9,7 @@ function Hello() {
     function onClickHandle() {
         let result = get('http://localhost:5000/api/hello')
         result.then((data: any) => {
-          
             setMessage(data.message);
-            
         })
         return;
 
