@@ -4,12 +4,13 @@ import UserControllers from '../controllers/users/list';
 
 router.post('/api/users', async (req, res) => {
     const inputs = req.body;
-    console.log(inputs)
+
     const limit = inputs.limit;
     const page = inputs.page;
-    const userInfos = await UserControllers.listUser(limit, page);
+    const rs = await UserControllers.listUser(limit, page);
     return res.send({
-        data: userInfos,
+        data: rs.userInfos,
+        count:rs.count,
         code: 1,
         message: "oke"
     })

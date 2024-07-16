@@ -7,9 +7,10 @@ router.post('/api/posts', async (req, res) => {
     console.log(inputs)
     const limit = inputs.limit;
     const page = inputs.page;
-    const postInfos = await PostControllers.listPost(limit, page);
+    const rs = await PostControllers.listPost(limit, page);
     return res.send({
-        data: postInfos,
+        data: rs.postInfos,
+        count:rs.count,
         code: 1,
         message: "oke"
     })
