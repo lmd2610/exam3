@@ -5,7 +5,6 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { post } from '../../utils/axios';
 
@@ -40,34 +39,28 @@ interface Data {
 export default function ListPost() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState([]);
+  const [rows, setRows] = React.useState<any[]>([]);
   const [count, setCount] = React.useState(0)
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-    console.log("page * rowsPerPage", page * rowsPerPage);
-    console.log("page * rowsPerPage + rowsPerPage", page * rowsPerPage + rowsPerPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-
-  };
+  const [loading, setLoading] = React.useState(false)
+  const [totalPage, setTotalPage] = React.useState(0)
+  const loadMore = () => {
+    if (page >= totalPage) return;
+    setLoading(true);
+    setPage(page + 1);
+  }
   const listPost = (data: any) => {
     let result = post('http://localhost:5000/api/posts', data)
     return result.then((rs) => {
-      console.log(rs)
-      setRows(rs.data);
-      setCount(rs.count)
+
+      setRows((rows) => [...rows, ...rs.data])
+      setLoading(false)
+      setTotalPage(rs.totalPageCount)
       return rs.data;
     })
-
-
   };
   React.useEffect(() => {
     listPost({ page: page, limit: rowsPerPage });
-
-  }, [page, rowsPerPage]);
+  }, [page]);
   return (
     <Paper sx={{ width: '100%' }}>
       <TableContainer sx={{ maxHeight: 440 }}>
@@ -78,7 +71,7 @@ export default function ListPost() {
                 <TableCell
                   key={column.id}
                   align={column.align}
-                  style={{  minWidth: column.minWidth }}
+                  style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
                 </TableCell>
@@ -87,7 +80,7 @@ export default function ListPost() {
           </TableHead>
           <TableBody>
             {rows
-              .slice(0, rowsPerPage)
+              .slice(0, page * rowsPerPage + rowsPerPage)
               .map((row: any) => {
                 return (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
@@ -107,15 +100,18 @@ export default function ListPost() {
           </TableBody>
         </Table>
       </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={count}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+      <div
+        style={{
+          padding: '2rem',
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+
+        <button disabled={loading} onClick={loadMore} hidden={page < totalPage ? false : true}>
+          {loading ? 'Loading...' : 'Press to load more'}
+        </button>
+      </div>
     </Paper>
   );
 }
