@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Navigate } from 'react-router-dom';
-import { get } from '../../../utils/axios';
+import { get } from 'src/utils/axios';
 function Hello() {
     const [message, setMessage] = useState('')
     if (localStorage.getItem('token') === null) {
