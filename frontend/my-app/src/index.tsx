@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import {  createBrowserRouter,RouterProvider } from "react-router-dom";
 
-import Hello from "./components/users/hello/hello";
+
 import reportWebVitals from './reportWebVitals';
 import Login from './components/users/login/login';
 import ListPost from './components/post/list';
@@ -16,10 +16,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <Login />,
   },
-  {
-    path: "/hello",
-    element: <Hello />
-  },
+  
   {
     path:"/posts",
     element:<ListPost/>

@@ -6,6 +6,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { post } from '../../utils/axios';
 
 interface Column {
@@ -14,104 +15,89 @@ interface Column {
   minWidth?: number;
   align?: 'right';
   format?: (value: number) => string;
+  witdhInfiniteScroll?: number
 }
 
 const columns: Column[] = [
-  { id: 'title', label: 'Title', minWidth: 170 },
-  { id: 'content', label: 'Content', minWidth: 100 },
+  { id: 'title', label: 'Title', minWidth: 200, witdhInfiniteScroll: 430 },
+  { id: 'content', label: 'Content', minWidth: 200, witdhInfiniteScroll: 430 },
   {
     id: 'tag',
     label: 'Tag',
     minWidth: 170,
-
+    witdhInfiniteScroll: 340
   }
 ];
-
-interface Data {
-  title: string;
-  content: string;
-  tag: string;
-}
-
-
-
-
 export default function ListPost() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState<any[]>([]);
-  const [count, setCount] = React.useState(0)
+  const [totalCount, setTotalCount] = React.useState(0)
   const [loading, setLoading] = React.useState(false)
   const [totalPage, setTotalPage] = React.useState(0)
-  const loadMore = () => {
-    if (page >= totalPage) return;
-    setLoading(true);
-    setPage(page + 1);
-  }
-  const listPost = (data: any) => {
-    let result = post('http://localhost:5000/api/posts', data)
-    return result.then((rs) => {
 
+  const listPost = () => {
+    let result = post('http://localhost:5000/api/posts', { page: page, limit: rowsPerPage })
+    result.then((rs) => {
       setRows((rows) => [...rows, ...rs.data])
-      setLoading(false)
+
       setTotalPage(rs.totalPageCount)
-      return rs.data;
+      setTotalCount(rs.totalCount)
+      setPage(page + 1);
     })
   };
   React.useEffect(() => {
-    listPost({ page: page, limit: rowsPerPage });
-  }, [page]);
+    listPost();
+  }, []);
   return (
-    <Paper sx={{ width: '100%' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows
-              .slice(0, page * rowsPerPage + rowsPerPage)
-              .map((row: any) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div
-        style={{
-          padding: '2rem',
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
+    <TableContainer sx={{ maxHeight: 440 }}>
+      <Table stickyHeader aria-label="sticky table" >
+        <TableHead>
 
-        <button disabled={loading} onClick={loadMore} hidden={page < totalPage ? false : true}>
-          {loading ? 'Loading...' : 'Press to load more'}
-        </button>
-      </div>
-    </Paper>
+          <TableRow>
+            {columns.map((column) => (
+              <TableCell
+                key={column.id}
+                align={column.align}
+                style={{ minWidth: column.minWidth }}
+              >
+                {column.label}
+              </TableCell>
+            ))}
+          </TableRow>
+
+        </TableHead>
+
+      </Table>
+      <InfiniteScroll
+        dataLength={rows.length}
+        next={listPost}
+        hasMore={rows.length < totalCount}
+        loader={<h4>Loading.....</h4>}
+        endMessage={
+          <p>het roif</p>
+        }
+        height={390}
+      >
+        {rows
+          .slice(0, page * rowsPerPage + rowsPerPage)
+          .map((row: any) => {
+            return (
+              <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                {columns.map((column) => {
+                  const value = row[column.id];
+                  return (
+                    <TableCell key={column.id} align={column.align} style={{ minWidth: column.witdhInfiniteScroll }}>
+                      {column.format && typeof value === 'number'
+                        ? column.format(value)
+                        : value}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            );
+          })}
+      </InfiniteScroll>
+    </TableContainer>
   );
 }
