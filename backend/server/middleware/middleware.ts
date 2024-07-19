@@ -1,4 +1,4 @@
-import { verifyJwt } from "../helpers/jwt"
+import { verifyJwt } from "@/helpers/jwt"
 
 function authenticateToken(req:any, res:any, next:any) {
  

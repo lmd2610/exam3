@@ -7,7 +7,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import TableRow from '@mui/material/TableRow';
-import { post } from '../../utils/axios';
+import { post } from 'src/utils/axios';
 
 interface Column {
   id: 'username' | 'password';

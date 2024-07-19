@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from '../../../utils/axios';
+import { post } from 'src/utils/axios';
 import { Navigate } from 'react-router-dom';
 function Login() {
     const [username, setUsername] = useState('');

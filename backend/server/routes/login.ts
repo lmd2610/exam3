@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
-import { Middleware } from '../middleware/middleware';
-import { UserSchema } from '../models/User';
-import { signJwt } from '../helpers/jwt';
+import { Middleware } from '@/middleware/middleware';
+import { UserSchema } from '@/models/User';
+import { signJwt } from '@/helpers/jwt';
 import mongoose from 'mongoose';
 router.post('/api/login', async (req, res) => {
     let inputs = req.body;
